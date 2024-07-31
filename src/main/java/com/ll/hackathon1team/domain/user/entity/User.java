@@ -17,12 +17,12 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(name = "userName", nullable = false)
+    @Column(name = "userName")
     private String userName;
 
     @Column(name = "email", nullable = false)
     private String email;
 
-    @Column(name = "image", nullable = false)
+    @Column(name = "image")
     private String image;
 }

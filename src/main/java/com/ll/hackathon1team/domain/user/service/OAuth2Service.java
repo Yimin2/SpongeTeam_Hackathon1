@@ -6,6 +6,7 @@ import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserServ
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -19,27 +20,33 @@ public class OAuth2Service extends DefaultOAuth2UserService {
     }
 
     @Override
+    @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         String email = oAuth2User.getAttribute("email");
-        String userName = oAuth2User.getAttribute("userName");
-        String image = oAuth2User.getAttribute("image");
+        String userName = oAuth2User.getAttribute("name");
+        String image = oAuth2User.getAttribute("picture");
 
-        Optional<User> userOptional = userRepository.findByEmail(email);
-        if (userOptional.isPresent()) {
-            User existingUser = userOptional.get();
-            existingUser.setUserName(userName);
-            existingUser.setImage(image);
-            userRepository.save(existingUser);
-        } else {
-            User newUser = User.builder()
-                    .email(email)
-                    .userName(userName)
-                    .image(image)
-                    .build();
-            userRepository.save(newUser);
-        }
+        User user = userRepository.findByEmail(email)
+                .map(existingUser -> updateUser(existingUser, userName, image))
+                .orElseGet(() -> createUser(email, userName, image));
+
+        userRepository.save(user);
 
         return oAuth2User;
+    }
+
+    private User updateUser(User user, String userName, String image) {
+        user.setUserName(userName);
+        user.setImage(image);
+        return user;
+    }
+
+    private User createUser(String email, String userName, String image) {
+        return User.builder()
+                .email(email)
+                .userName(userName)
+                .image(image)
+                .build();
     }
 }

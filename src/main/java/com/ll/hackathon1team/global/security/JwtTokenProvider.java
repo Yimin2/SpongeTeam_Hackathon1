@@ -3,7 +3,6 @@ package com.ll.hackathon1team.global.security;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.springframework.stereotype.Component;
 import java.util.Date;
 
