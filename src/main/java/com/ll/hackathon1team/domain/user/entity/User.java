@@ -25,4 +25,12 @@ public class User {
 
     @Column(name = "image")
     private String image;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private Role role = Role.ROLE_USER;
+
+    public String getAuthority() {
+        return role.name();
+    }
 }
