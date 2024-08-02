@@ -9,13 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Controller
 public class UserController {
-
-    private final JwtTokenProvider jwtTokenProvider;
-
-    public UserController(JwtTokenProvider jwtTokenProvider) {
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
-
     @GetMapping("/")
     public String home() {
         return "home";
@@ -24,11 +17,5 @@ public class UserController {
     @GetMapping("/login")
     public String login() {
         return "login";
-    }
-
-    @GetMapping("/token")
-    public String token(@AuthenticationPrincipal OAuth2User oAuth2User) {
-        String token = jwtTokenProvider.createToken(oAuth2User.getName());
-        return "Bearer " + token;
     }
 }
