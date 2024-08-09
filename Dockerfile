@@ -1,5 +1,5 @@
 # 첫 번째 스테이지: 빌드 스테이지
-FROM gradle:jdk21-graal-jammy as builder
+FROM gradle:jdk17-alpine as builder
 
 # 작업 디렉토리 설정
 WORKDIR /app
@@ -13,6 +13,9 @@ COPY settings.gradle .
 # Gradle 래퍼에 실행 권한 부여
 RUN chmod +x ./gradlew
 
+# Gradle toolchain 설정을 위한 build.gradle 파일에 추가 설정
+RUN echo "java { toolchain { languageVersion = JavaLanguageVersion.of(17) } }" >> build.gradle
+
 # 종속성 설치
 RUN ./gradlew dependencies --no-daemon
 
@@ -23,7 +26,7 @@ COPY src src
 RUN ./gradlew build --no-daemon
 
 # 두 번째 스테이지: 실행 스테이지
-FROM ghcr.io/graalvm/jdk-community:21
+FROM eclipse-temurin:17-jre-alpine
 
 # 작업 디렉토리 설정
 WORKDIR /app
