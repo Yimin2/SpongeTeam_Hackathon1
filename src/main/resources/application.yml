@@ -2,9 +2,9 @@ spring:
   profiles:
     include: secret
   datasource:
-    url: jdbc:mysql://3.35.174.236:3306/mobaewooji
+    url: jdbc:mysql://dev-db-1.cfg22ucyuuz4.ap-northeast-2.rds.amazonaws.com:3306/mobaewooji
     username: root
-    password: ch5319!
+    password: ch5319!!
     driver-class-name: com.mysql.cj.jdbc.Driver
   h2:
     console:
