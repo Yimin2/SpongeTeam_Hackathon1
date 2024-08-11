@@ -63,3 +63,7 @@ dependencies {
 tasks.withType(Test) {
     useJUnitPlatform()
 }
+
+tasks.named('bootJar') {
+    mainClass.set('com.ll.hackathon1team.Hackathon1TeamApplication')
+}
