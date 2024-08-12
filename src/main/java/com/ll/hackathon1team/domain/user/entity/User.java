@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
+@Table(name = "users")
 @Getter
 @Setter
 @DynamicUpdate
