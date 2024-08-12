@@ -1,6 +1,7 @@
 package com.ll.hackathon1team.domain.reivew.entity;
 
 import com.ll.hackathon1team.domain.user.entity.User;
+import com.ll.hackathon1team.global.jpa.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Review {
+public class Review extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reviewID;
