@@ -3,6 +3,7 @@ package com.ll.hackathon1team.domain.reivew.entity;
 import com.ll.hackathon1team.domain.user.entity.User;
 import com.ll.hackathon1team.global.jpa.BaseTimeEntity;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
