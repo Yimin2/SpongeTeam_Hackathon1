@@ -42,14 +42,14 @@ public class ReviewController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<Review> updateReview(@PathVariable Long id, @RequestBody ReviewUpdateDTO reviewUpdateDTO, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<Review> updateReview(@PathVariable("id") Long id, @RequestBody ReviewUpdateDTO reviewUpdateDTO, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         Review updatedReview = reviewService.updateReview(id, reviewUpdateDTO, user);
         return ResponseEntity.ok(updatedReview);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReview(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<Void> deleteReview(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         reviewService.deleteReview(id, user);
         return ResponseEntity.noContent().build();

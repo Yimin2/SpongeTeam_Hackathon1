@@ -43,19 +43,20 @@ public class ReviewService {
             throw new AccessDeniedException("You do not have permission to edit this review");
         }
 
-        review.setCourseId(reviewUpdateDTO.getCourseId());
-        review.setReviewStatus(reviewUpdateDTO.getReviewStatus());
-        review.setCourseLocation(reviewUpdateDTO.getCourseLocation());
-        review.setUserMajor(reviewUpdateDTO.getUserMajor());
-        review.setUserFinish(reviewUpdateDTO.getUserFinish());
-        review.setCourseInstructor(reviewUpdateDTO.getCourseInstructor());
+        if (reviewUpdateDTO.getCourseId() != null) review.setCourseId(reviewUpdateDTO.getCourseId());
+        if (reviewUpdateDTO.getReviewStatus() != null) review.setReviewStatus(reviewUpdateDTO.getReviewStatus());
+        if (reviewUpdateDTO.getCourseLocation() != null) review.setCourseLocation(reviewUpdateDTO.getCourseLocation());
+        if (reviewUpdateDTO.getUserMajor() != null) review.setUserMajor(reviewUpdateDTO.getUserMajor());
+        if (reviewUpdateDTO.getUserFinish() != null) review.setUserFinish(reviewUpdateDTO.getUserFinish());
+        if (reviewUpdateDTO.getCourseInstructor() != null) review.setCourseInstructor(reviewUpdateDTO.getCourseInstructor());
         review.setCourseTeam(reviewUpdateDTO.isCourseTeam());
-        review.setReviewRate(reviewUpdateDTO.getReviewRate());
-        review.setReviewPro(reviewUpdateDTO.getReviewPro());
-        review.setReviewCon(reviewUpdateDTO.getReviewCon());
-        review.setReviewProposal(reviewUpdateDTO.getReviewProposal());
+        if (reviewUpdateDTO.getReviewRate() > 0) review.setReviewRate(reviewUpdateDTO.getReviewRate());
+        if (reviewUpdateDTO.getReviewPro() != null) review.setReviewPro(reviewUpdateDTO.getReviewPro());
+        if (reviewUpdateDTO.getReviewCon() != null) review.setReviewCon(reviewUpdateDTO.getReviewCon());
+        if (reviewUpdateDTO.getReviewProposal() != null) review.setReviewProposal(reviewUpdateDTO.getReviewProposal());
         review.setReviewRecommend(reviewUpdateDTO.isReviewRecommend());
-        review.setReviewCertImg(reviewUpdateDTO.getReviewCertImg());
+        if (reviewUpdateDTO.getReviewCertImg() != null) review.setReviewCertImg(reviewUpdateDTO.getReviewCertImg());
+
 
         return reviewRepository.save(review);
     }
