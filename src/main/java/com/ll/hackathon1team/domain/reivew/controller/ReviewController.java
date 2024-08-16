@@ -4,6 +4,7 @@ import com.ll.hackathon1team.domain.reivew.dto.ReviewUpdateDTO;
 import com.ll.hackathon1team.domain.reivew.entity.Review;
 import com.ll.hackathon1team.domain.reivew.service.ReviewService;
 import com.ll.hackathon1team.domain.user.entity.User;
+import com.ll.hackathon1team.global.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,19 +34,23 @@ public class ReviewController {
     }
 
     @PostMapping
-    public ResponseEntity<Review> createReview(@RequestBody Review review, @AuthenticationPrincipal User user) {
+    public ResponseEntity<Review> createReview(@RequestBody Review review, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
         Review createdReview = reviewService.createReview(review, user);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdReview);
     }
 
+
     @PutMapping("/{id}")
-    public ResponseEntity<Review> updateReview(@PathVariable Long id, @RequestBody ReviewUpdateDTO reviewUpdateDTO, @AuthenticationPrincipal User user) {
+    public ResponseEntity<Review> updateReview(@PathVariable Long id, @RequestBody ReviewUpdateDTO reviewUpdateDTO, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
         Review updatedReview = reviewService.updateReview(id, reviewUpdateDTO, user);
         return ResponseEntity.ok(updatedReview);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReview(@PathVariable Long id, @AuthenticationPrincipal User user) {
+    public ResponseEntity<Void> deleteReview(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
         reviewService.deleteReview(id, user);
         return ResponseEntity.noContent().build();
     }
