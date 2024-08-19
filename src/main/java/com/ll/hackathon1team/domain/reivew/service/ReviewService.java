@@ -8,10 +8,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import com.ll.hackathon1team.domain.user.entity.User;
-import com.ll.hackathon1team.domain.user.repository.UserRepository;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -19,8 +20,9 @@ public class ReviewService {
 
     @Autowired
     private ReviewRepository reviewRepository;
+
     @Autowired
-    private UserRepository userRepository;
+    private S3Service s3Service;
 
     public List<Review> getAllReviews() {
         return reviewRepository.findAll();
@@ -30,8 +32,13 @@ public class ReviewService {
         return reviewRepository.findById(id);
     }
 
-    public Review createReview(Review review, User user) {
+    public Review createReview(String reviewData, MultipartFile file, User user) throws IOException {
+        String fileUrl = s3Service.uploadFile(file);
+
+        Review review = new Review();
         review.setUser(user);
+        review.setReviewCertImg(fileUrl);
+
         return reviewRepository.save(review);
     }
 
