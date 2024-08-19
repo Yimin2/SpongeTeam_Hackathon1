@@ -32,8 +32,4 @@ public class User extends BaseTimeEntity {
     @Column(name = "role", nullable = false)
     @Builder.Default
     private Role role = Role.ROLE_USER;
-
-    public String getAuthority() {
-        return role.name();
-    }
 }
