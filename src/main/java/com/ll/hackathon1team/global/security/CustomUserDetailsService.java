@@ -23,20 +23,14 @@ public class CustomUserDetailsService implements UserDetailsService {
     private JwtTokenProvider jwtTokenProvider;
 
     @Override
-    public UserDetails loadUserByUsername(String userPk) throws UsernameNotFoundException {
-        User user = userRepository.findById(Long.parseLong(userPk))
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + userPk));
-        List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name()));
+    public UserDetailsImpl loadUserByUsername(String userPk) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(userPk)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + userPk));
 
-
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                "",
-                authorities
-        );
+        return new UserDetailsImpl(user);
     }
 
-    public UserDetails loadUserByToken(String token) {
+    public UserDetailsImpl loadUserByToken(String token) {
         String userPk = jwtTokenProvider.getUserPk(token);
         return loadUserByUsername(userPk);
     }
