@@ -52,10 +52,20 @@ public class ReviewController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<Review> updateReview(@PathVariable("id") Long id, @RequestBody ReviewUpdateDTO reviewUpdateDTO, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        User user = userDetails.getUser();
-        Review updatedReview = reviewService.updateReview(id, reviewUpdateDTO, user);
-        return ResponseEntity.ok(updatedReview);
+    public ResponseEntity<Review> updateReview(
+            @PathVariable("id") Long id,
+            @RequestParam("reviewData") String reviewData,
+            @RequestParam(value = "file", required = false) MultipartFile file,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        try {
+            User user = userDetails.getUser();
+            Review updatedReview = reviewService.updateReview(id, reviewData, file, user);
+            return ResponseEntity.ok(updatedReview);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     @DeleteMapping("/{id}")

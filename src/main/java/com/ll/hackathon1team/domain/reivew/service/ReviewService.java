@@ -1,5 +1,6 @@
 package com.ll.hackathon1team.domain.reivew.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ll.hackathon1team.domain.reivew.dto.ReviewUpdateDTO;
 import com.ll.hackathon1team.domain.reivew.entity.Review;
 import com.ll.hackathon1team.domain.reivew.repository.ReviewRepository;
@@ -24,6 +25,9 @@ public class ReviewService {
     @Autowired
     private S3Service s3Service;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     public List<Review> getAllReviews() {
         return reviewRepository.findAll();
     }
@@ -42,12 +46,19 @@ public class ReviewService {
         return reviewRepository.save(review);
     }
 
-    public Review updateReview(Long id, ReviewUpdateDTO reviewUpdateDTO, User user) {
+    public Review updateReview(Long id, String reviewData, MultipartFile file, User user) throws IOException {
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Review not found with id " + id));
 
         if (!review.getUser().getId().equals(user.getId())) {
             throw new AccessDeniedException("You do not have permission to edit this review");
+        }
+
+        ReviewUpdateDTO reviewUpdateDTO = objectMapper.readValue(reviewData, ReviewUpdateDTO.class);
+
+        if (file != null && !file.isEmpty()) {
+            String fileUrl = s3Service.uploadFile(file);
+            review.setReviewCertImg(fileUrl);
         }
 
         if (reviewUpdateDTO.getCourseId() != null) review.setCourseId(reviewUpdateDTO.getCourseId());
@@ -63,7 +74,6 @@ public class ReviewService {
         if (reviewUpdateDTO.getReviewProposal() != null) review.setReviewProposal(reviewUpdateDTO.getReviewProposal());
         review.setReviewRecommend(reviewUpdateDTO.isReviewRecommend());
         if (reviewUpdateDTO.getReviewCertImg() != null) review.setReviewCertImg(reviewUpdateDTO.getReviewCertImg());
-
 
         return reviewRepository.save(review);
     }
