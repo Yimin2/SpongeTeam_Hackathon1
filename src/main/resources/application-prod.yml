@@ -1,8 +1,6 @@
 spring:
   datasource:
     url: jdbc:mysql://dev-db-1.cfg22ucyuuz4.ap-northeast-2.rds.amazonaws.com:3306/mobaewooji
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
