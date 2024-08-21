@@ -6,12 +6,17 @@ import com.ll.hackathon1team.domain.reivew.service.ReviewService;
 import com.ll.hackathon1team.domain.user.entity.User;
 import com.ll.hackathon1team.global.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,8 +28,18 @@ public class ReviewController {
     private ReviewService reviewService;
 
     @GetMapping
-    public List<Review> getAllReviews() {
-        return reviewService.getAllReviews();
+    public ResponseEntity<Page<Review>> getAllReviews(
+            @RequestParam(value = "courseId", required = false) Long courseId,
+            @RequestParam(value = "courseInstructor", required = false) String courseInstructor,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("reviewID"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sorts));
+
+        Page<Review> reviewPage = reviewService.searchReviews(courseId, courseInstructor, pageable);
+        return ResponseEntity.ok(reviewPage);
     }
 
     @GetMapping("/{id}")
@@ -37,7 +52,7 @@ public class ReviewController {
     @PostMapping
     public ResponseEntity<?> createReview(
             @RequestParam("reviewData") String reviewData,
-            @RequestParam("file") MultipartFile file,
+            @RequestParam(value = "file", required = false) MultipartFile file,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         try {
             User user = userDetails.getUser();
