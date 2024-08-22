@@ -5,6 +5,7 @@ import com.ll.hackathon1team.domain.reivew.entity.Review;
 import com.ll.hackathon1team.domain.reivew.service.ReviewService;
 import com.ll.hackathon1team.domain.user.entity.User;
 import com.ll.hackathon1team.global.security.UserDetailsImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

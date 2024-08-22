@@ -31,18 +31,18 @@ public class ReviewService {
         return reviewRepository.searchByKeyword(courseId, courseInstructor, pageable);
     }
 
-    public List<Review> getAllReviews() {
-        return reviewRepository.findAll();
-    }
-
     public Optional<Review> getReviewById(Long id) {
         return reviewRepository.findById(id);
     }
 
     public Review createReview(String reviewData, MultipartFile file, User user) throws IOException {
-        String fileUrl = s3Service.uploadFile(file);
+        String fileUrl = null;
 
-        Review review = new Review();
+        if (file != null && !file.isEmpty()) {
+            fileUrl = s3Service.uploadFile(file);
+        }
+
+        Review review = objectMapper.readValue(reviewData, Review.class);
         review.setUser(user);
         review.setReviewCertImg(fileUrl);
 

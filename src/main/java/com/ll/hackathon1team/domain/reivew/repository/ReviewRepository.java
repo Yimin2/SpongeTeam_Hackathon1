@@ -11,5 +11,4 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("SELECT r FROM Review r WHERE (:courseId IS NULL OR r.courseId = :courseId) AND (:courseInstructor IS NULL OR r.courseInstructor = :courseInstructor)")
     Page<Review> searchByKeyword(@Param("courseId") Long courseId, @Param("courseInstructor") String courseInstructor, Pageable pageable);
-
 }
