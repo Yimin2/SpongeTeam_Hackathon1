@@ -1,5 +1,6 @@
 package com.ll.hackathon1team.global.jpa;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
@@ -19,9 +20,11 @@ public class BaseTimeEntity {
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
+    @Schema(description = "생성 시간")
     private LocalDateTime createdAt;
 
     @LastModifiedDate
     @Column(nullable = false)
+    @Schema(description = "수정 시간")
     private LocalDateTime modifiedAt;
 }

@@ -1,11 +1,12 @@
 package com.ll.hackathon1team.domain.reivew.controller;
 
-import com.ll.hackathon1team.domain.reivew.dto.ReviewUpdateDTO;
 import com.ll.hackathon1team.domain.reivew.entity.Review;
 import com.ll.hackathon1team.domain.reivew.service.ReviewService;
 import com.ll.hackathon1team.domain.user.entity.User;
 import com.ll.hackathon1team.global.security.UserDetailsImpl;
-import lombok.extern.slf4j.Slf4j;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,12 +24,14 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/reviews")
+@Tag(name = "Review API", description = "Review CRUD API")
 public class ReviewController {
 
     @Autowired
     private ReviewService reviewService;
 
     @GetMapping
+    @Operation(summary = "모든 리뷰 조회", description = "검색, 필터링, 페이징 (http://localhost:8080/api/reviews?courseId=3&page=0&size=10)")
     public ResponseEntity<Page<Review>> getAllReviews(
             @RequestParam(value = "courseId", required = false) Long courseId,
             @RequestParam(value = "courseInstructor", required = false) String courseInstructor,
@@ -44,6 +47,7 @@ public class ReviewController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "리뷰 ID로 조회", description = "리뷰 ID를 통해 특정 리뷰 조회")
     public ResponseEntity<Review> getReviewById(@PathVariable Long id) {
         Optional<Review> review = reviewService.getReviewById(id);
         return review.map(ResponseEntity::ok)
@@ -51,28 +55,32 @@ public class ReviewController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createReview(
-            @RequestParam("reviewData") String reviewData,
-            @RequestParam(value = "file", required = false) MultipartFile file,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    @Operation(summary = "리뷰 생성", description = "새로운 리뷰 생성")
+    public ResponseEntity<Review> createReview(
+            @RequestPart("reviewData") @Parameter(description = "리뷰 데이터", required = true) String reviewData,
+            @RequestPart(value = "file", required = false) @Parameter(description = "첨부 파일") MultipartFile file,
+            @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestHeader(value = "Authorization", required = true) @Parameter(description = "Bearer 인증 토큰", required = true) String authorization) {
         try {
             User user = userDetails.getUser();
             Review review = reviewService.createReview(reviewData, file, user);
             return ResponseEntity.status(HttpStatus.CREATED).body(review);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(null);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing your request");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 
 
     @PutMapping("/{id}")
+    @Operation(summary = "리뷰 수정", description = "리뷰 ID로 리뷰를 수정")
     public ResponseEntity<Review> updateReview(
             @PathVariable("id") Long id,
             @RequestParam("reviewData") String reviewData,
             @RequestParam(value = "file", required = false) MultipartFile file,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+            @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestHeader(value = "Authorization", required = true) @Parameter(description = "Bearer 인증 토큰", required = true) String authorization) {
         try {
             User user = userDetails.getUser();
             Review updatedReview = reviewService.updateReview(id, reviewData, file, user);
@@ -85,7 +93,11 @@ public class ReviewController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteReview(@PathVariable("id") Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    @Operation(summary = "리뷰 삭제", description = "특정 리뷰를 삭제")
+    public ResponseEntity<Void> deleteReview(
+            @PathVariable("id") Long id,
+            @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestHeader(value = "Authorization", required = true) @Parameter(description = "Bearer 인증 토큰", required = true) String authorization) {
         User user = userDetails.getUser();
         reviewService.deleteReview(id, user);
         return ResponseEntity.noContent().build();
