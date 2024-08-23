@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ll.hackathon1team.domain.reivew.dto.ReviewUpdateDTO;
 import com.ll.hackathon1team.domain.reivew.entity.Review;
 import com.ll.hackathon1team.domain.reivew.repository.ReviewRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -17,19 +20,15 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@AllArgsConstructor
 public class ReviewService {
 
-    @Autowired
     private ReviewRepository reviewRepository;
-
-    @Autowired
     private S3Service s3Service;
-
-    @Autowired
     private ObjectMapper objectMapper;
 
-    public List<Review> getAllReviews() {
-        return reviewRepository.findAll();
+    public Page<Review> searchReviews(Long courseId, String courseInstructor, Pageable pageable) {
+        return reviewRepository.searchByKeyword(courseId, courseInstructor, pageable);
     }
 
     public Optional<Review> getReviewById(Long id) {
@@ -37,9 +36,13 @@ public class ReviewService {
     }
 
     public Review createReview(String reviewData, MultipartFile file, User user) throws IOException {
-        String fileUrl = s3Service.uploadFile(file);
+        String fileUrl = null;
 
-        Review review = new Review();
+        if (file != null && !file.isEmpty()) {
+            fileUrl = s3Service.uploadFile(file);
+        }
+
+        Review review = objectMapper.readValue(reviewData, Review.class);
         review.setUser(user);
         review.setReviewCertImg(fileUrl);
 

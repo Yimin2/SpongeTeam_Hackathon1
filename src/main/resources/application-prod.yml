@@ -9,8 +9,16 @@ spring:
     properties:
       hibernate:
         format_sql: false
-        dialect: org.hibernate.dialect.MySQL8Dialect
+        dialect: org.hibernate.dialect.MySQLDialect
     open-in-view: false
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            scope: profile, email
+            redirect-uri: "https://www.mobaewooji.site/login/oauth2/code/google"
+            authorization-grant-type: authorization_code
 
 logging:
   level:
