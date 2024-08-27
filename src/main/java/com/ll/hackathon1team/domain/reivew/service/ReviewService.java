@@ -65,7 +65,6 @@ public class ReviewService {
         }
 
         if (reviewUpdateDTO.getCourseId() != null) review.setCourseId(reviewUpdateDTO.getCourseId());
-        if (reviewUpdateDTO.getReviewStatus() != null) review.setReviewStatus(reviewUpdateDTO.getReviewStatus());
         if (reviewUpdateDTO.getCourseLocation() != null) review.setCourseLocation(reviewUpdateDTO.getCourseLocation());
         if (reviewUpdateDTO.getUserMajor() != null) review.setUserMajor(reviewUpdateDTO.getUserMajor());
         if (reviewUpdateDTO.getUserFinish() != null) review.setUserFinish(reviewUpdateDTO.getUserFinish());
@@ -90,5 +89,14 @@ public class ReviewService {
         }
 
         reviewRepository.delete(review);
+    }
+
+    public Review updateReviewStatus(Long id, String reviewStatus) {
+        Review review = reviewRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Review not found with id " + id));
+
+        review.setReviewStatus(reviewStatus);
+
+        return reviewRepository.save(review);
     }
 }
