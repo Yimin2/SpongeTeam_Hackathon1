@@ -27,8 +27,8 @@ public class ReviewService {
     private S3Service s3Service;
     private ObjectMapper objectMapper;
 
-    public Page<Review> searchReviews(Long courseId, String courseInstructor, Pageable pageable) {
-        return reviewRepository.searchByKeyword(courseId, courseInstructor, pageable);
+    public Page<Review> searchReviews(String courseName, String schoolName, String courseInstructor, Pageable pageable) {
+        return reviewRepository.searchByKeyword(courseName, schoolName, courseInstructor, pageable);
     }
 
     public Optional<Review> getReviewById(Long id) {
@@ -64,7 +64,11 @@ public class ReviewService {
             review.setReviewCertImg(fileUrl);
         }
 
-        if (reviewUpdateDTO.getCourseId() != null) review.setCourseId(reviewUpdateDTO.getCourseId());
+        if (reviewUpdateDTO.getCourseName() != null) review.setCourseName(reviewUpdateDTO.getCourseName());
+        if (reviewUpdateDTO.getCourseStartDate() != null) review.setCourseStartDate(reviewUpdateDTO.getCourseStartDate());
+        if (reviewUpdateDTO.getCourseEndDate() != null) review.setCourseEndDate(reviewUpdateDTO.getCourseEndDate());
+        if (reviewUpdateDTO.getSchoolName() != null) review.setSchoolName(reviewUpdateDTO.getSchoolName());
+        if (reviewUpdateDTO.getSchoolAddress() != null) review.setSchoolAddress(reviewUpdateDTO.getSchoolAddress());
         if (reviewUpdateDTO.getCourseLocation() != null) review.setCourseLocation(reviewUpdateDTO.getCourseLocation());
         if (reviewUpdateDTO.getUserMajor() != null) review.setUserMajor(reviewUpdateDTO.getUserMajor());
         if (reviewUpdateDTO.getUserFinish() != null) review.setUserFinish(reviewUpdateDTO.getUserFinish());

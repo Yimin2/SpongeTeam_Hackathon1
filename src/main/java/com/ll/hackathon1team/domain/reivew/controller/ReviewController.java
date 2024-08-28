@@ -32,9 +32,10 @@ public class ReviewController {
     private ReviewService reviewService;
 
     @GetMapping
-    @Operation(summary = "모든 리뷰 조회", description = "검색, 필터링, 페이징 (http://localhost:8080/api/reviews?courseId=3&page=0&size=10)")
+    @Operation(summary = "모든 리뷰 조회", description = "검색, 필터링, 페이징 (http://localhost:8080/api/reviews?courseName=교육이름&page=0&size=10)")
     public ResponseEntity<Page<Review>> getAllReviews(
-            @RequestParam(value = "courseId", required = false) Long courseId,
+            @RequestParam(value = "courseName", required = false) String courseName,
+            @RequestParam(value = "schoolName", required = false) String schoolName,
             @RequestParam(value = "courseInstructor", required = false) String courseInstructor,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size) {
@@ -43,7 +44,7 @@ public class ReviewController {
         sorts.add(Sort.Order.desc("reviewID"));
         Pageable pageable = PageRequest.of(page, size, Sort.by(sorts));
 
-        Page<Review> reviewPage = reviewService.searchReviews(courseId, courseInstructor, pageable);
+        Page<Review> reviewPage = reviewService.searchReviews(courseName, schoolName, courseInstructor, pageable);
         return ResponseEntity.ok(reviewPage);
     }
 

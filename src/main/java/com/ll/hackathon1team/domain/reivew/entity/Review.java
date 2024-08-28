@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -26,8 +27,20 @@ public class Review extends BaseTimeEntity {
     @Schema(description = "작성자 유저 ID")
     private User user;
 
-    @Schema(description = "교육 ID")
-    private Long courseId;
+    @Schema(description = "교육 이름")
+    private String courseName;
+
+    @Schema(description = "교육 시작일")
+    private LocalDate courseStartDate;
+
+    @Schema(description = "교육 종료일")
+    private LocalDate courseEndDate;
+
+    @Schema(description = "학원 이름")
+    private String schoolName;
+
+    @Schema(description = "학원 주소")
+    private String schoolAddress;
 
     @Schema(description = "심사 상태")
     private String reviewStatus;
