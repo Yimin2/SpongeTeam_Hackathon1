@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,12 +49,26 @@ public class ReviewController {
         return ResponseEntity.ok(reviewPage);
     }
 
-    @GetMapping("/{id}")
-    @Operation(summary = "리뷰 ID로 조회", description = "리뷰 ID를 통해 특정 리뷰 조회")
-    public ResponseEntity<Review> getReviewById(@PathVariable Long id) {
-        Optional<Review> review = reviewService.getReviewById(id);
-        return review.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    @GetMapping("/my-reviews")
+    @Operation(summary = "내가 작성한 리뷰 조회", description = "현재 로그인한 사용자가 작성한 모든 리뷰를 조회")
+    public ResponseEntity<Page<Review>> getMyReviews(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @Parameter(hidden = true) @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestHeader(value = "Authorization", required = true) @Parameter(description = "Bearer 인증 토큰", required = true) String authorization) {
+        String userEmail = userDetails.getUsername();
+
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("reviewID"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sorts));
+
+        Page<Review> myReviewPage = reviewService.getReviewsByUserEmail(userEmail, pageable);
+
+        if (myReviewPage.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(myReviewPage);
     }
 
     @PostMapping

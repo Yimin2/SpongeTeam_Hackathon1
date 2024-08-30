@@ -31,8 +31,8 @@ public class ReviewService {
         return reviewRepository.searchByKeyword(courseName, schoolName, courseInstructor, pageable);
     }
 
-    public Optional<Review> getReviewById(Long id) {
-        return reviewRepository.findById(id);
+    public Page<Review> getReviewsByUserEmail(String email, Pageable pageable) {
+        return reviewRepository.findAllByUserEmail(email, pageable);
     }
 
     public Review createReview(String reviewData, MultipartFile file, User user) throws IOException {
